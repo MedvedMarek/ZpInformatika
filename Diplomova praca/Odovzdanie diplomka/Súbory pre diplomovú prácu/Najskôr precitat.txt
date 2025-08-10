@@ -1,0 +1,4 @@
+Pred spustenim R kodov prekopirovat samotnu zlozku "Kod,testy a data pre model" na pracovnu plochu. 
+Potom z tohoto umiestnenia spustat jednotlive subory. Nacitavanie dat a funkcii tak prebehne
+automaticky. Je to tak pripravene v suboroch. Aby sa nemusela stale urcovat cesta k datam
+a funkciam.

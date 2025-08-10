@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="UTF-8">
+	<title>Live Data Plot</title>
+	<style>
+         html, body {
+             margin: 0;
+             padding: 0;
+             width: 100%;
+             height: 100%;
+             background-color: #333; /* Tmavé pozadie */
+             color: #fff;
+         }
+         #graph {
+             width: 100%;
+             height: 100%;
+             background-color: #222;
+         }
+	</style>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    </head>
+    <body>
+	<div id="graph"></div>
+	<script>
+         var initialPlot = true;
+         var layout = {
+             xaxis: {
+                 rangeslider: { visible: false },
+                 color: '#fff',
+                 nticks: 20, // aka husta bude mriezka
+		 tickformat: '%H:%M:%S'
+             },
+             yaxis: {
+                 fixedrange: false,
+                 color: '#fff',
+                 nticks: 15 // aka husta bude mriezka
+             },
+             paper_bgcolor: '#222',
+             plot_bgcolor: '#222',
+             font: {
+                 color: '#fff'
+             },
+             autosize: true, // Automatické prispôsobenie veľkosti
+             margin: { l: 60, r: 10, t: 10, b: 20 } // Nastavenie okrajov
+         };
+         var config = {
+             displayModeBar: false,
+             scrollZoom: true,
+             dragMode: 'pan',
+             responsive: true // Pridanie reaktivity na zmenu veľkosti okna
+         };
+
+         // Pripojenie k WebSocket serveru
+         var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+         // Počúvanie na 'my_data' udalosť pre prijímanie dát
+         socket.on('my_data', function(data) {
+             var sviecky = {
+                 x: [data.smart_time],
+                 close: [data.smart_close],
+                 open: [data.open],
+                 high: [data.high],
+                 low: [data.low],
+                 type: 'candlestick',
+                 name: 'sviecky',
+                 hoverinfo: 'none'
+             };
+	     
+	     var arca = {
+		 x: [data.arca_time],
+		 y: [data.arca_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.arca_volume],
+		     color: '#1f77b4',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'arca',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var bats = {
+		 x: [data.bats_time],
+		 y: [data.bats_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.bats_volume],
+		     color: '#ff7f0e',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'bats',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var drctedge = {
+		 x: [data.drctedge_time],
+		 y: [data.drctedge_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.drctedge_volume],
+		     color: '#2ca02c',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'drctedge',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var edgea = {
+		 x: [data.edgea_time],
+		 y: [data.edgea_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.edgea_volume],
+		     color: '#d62728',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'edgea',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var iex = {
+		 x: [data.iex_time],
+		 y: [data.iex_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.iex_volume],
+		     color: '#9467bd',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'iex',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var memx = {
+		 x: [data.memx_time],
+		 y: [data.memx_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.memx_volume],
+		     color: '#8c564b',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'memx',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var nasdaq = {
+		 x: [data.nasdaq_time],
+		 y: [data.nasdaq_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.nasdaq_volume],
+		     color: '#e377c2',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'nasdaq',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var nyse = {
+		 x: [data.nyse_time],
+		 y: [data.nyse_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.nyse_volume],
+		     color: '#7f7f7f',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'nyse',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var pearl = {
+		 x: [data.pearl_time],
+		 y: [data.pearl_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.pearl_volume],
+		     color: '#bcbd22',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'pearl',
+		 hoverinfo: 'none'
+	     };
+	     
+	     var psx = {
+		 x: [data.psx_time],
+		 y: [data.psx_close],
+		 type: 'scatter',
+		 mode: 'markers',
+		 marker: {
+		     size: [data.psx_volume],
+		     color: '#17becf',  // raspberry yogurt pink
+		     opacity: 0.5
+		 },
+		 name: 'psx',
+		 hoverinfo: 'none'
+	     };
+	     
+             if (initialPlot) {
+                 Plotly.newPlot('graph', [sviecky, arca, bats, drctedge, edgea, iex, memx, nasdaq, nyse, pearl, psx], layout, config);
+                 initialPlot = false;
+             } else {
+                 Plotly.extendTraces('graph', {
+                     x: [[data.smart_time]],
+                     close: [[data.smart_close]],
+                     open: [[data.open]],
+                     high: [[data.high]],
+                     low: [[data.low]]
+                 }, [0]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.arca_time]],
+		     y: [[data.arca_close]],
+		     'marker.size': [[data.arca_volume]]
+		 }, [1]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.bats_time]],
+		     y: [[data.bats_close]],
+		     'marker.size': [[data.bats_volume]]
+		 }, [2]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.drctedge_time]],
+		     y: [[data.drctedge_close]],
+		     'marker.size': [[data.drctedge_volume]]
+		 }, [3]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.edgea_time]],
+		     y: [[data.edgea_close]],
+		     'marker.size': [[data.edgea_volume]]
+		 }, [4]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.iex_time]],
+		     y: [[data.iex_close]],
+		     'marker.size': [[data.iex_volume]]
+		 }, [5]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.memx_time]],
+		     y: [[data.memx_close]],
+		     'marker.size': [[data.memx_volume]]
+		 }, [6]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.nasdaq_time]],
+		     y: [[data.nasdaq_close]],
+		     'marker.size': [[data.nasdaq_volume]]
+		 }, [7]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.nyse_time]],
+		     y: [[data.nyse_close]],
+		     'marker.size': [[data.nyse_volume]]
+		 }, [8]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.pearl_time]],
+		     y: [[data.pearl_close]],
+		     'marker.size': [[data.pearl_volume]]
+		 }, [9]);
+
+		 Plotly.extendTraces('graph', {
+		     x: [[data.psx_time]],
+		     y: [[data.psx_close]],
+		     'marker.size': [[data.psx_volume]]
+		 }, [10]);
+
+		 Plotly.restyle('graph', {'marker.opacity': 0.5}, [0,1,2,3,4,5,6,7,8,9,10]);
+             }
+         });
+	</script>
+    </body>
+</html>

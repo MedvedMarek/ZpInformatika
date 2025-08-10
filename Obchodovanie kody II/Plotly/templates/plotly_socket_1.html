@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="UTF-8">
+	<title>Real-time Plotly Graph</title>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    </head>
+    <body>
+	<div id="plot"></div>
+
+	<script type="text/javascript">
+         var socket = io.connect('http://' + document.domain + ':' + location.port);
+         var layout = {
+             title: 'Real-time Data',
+             xaxis: {title: 'X Axis'},
+             yaxis: {title: 'Y Axis'}
+         };
+
+         // Inicializujeme graf s prázdnymi dátami
+         Plotly.newPlot('plot', [{
+             x: [],
+             y: [],
+             type: 'scatter'
+         }], layout);
+
+         socket.on('connect', function() {
+             console.log('Connected to WebSocket server!');
+         });
+
+         socket.on('my_data', function(data) {
+             // Rozšírime graf o nové dáta
+             Plotly.extendTraces('plot', {
+                 x: [[data.x[0]]], // Plotly.extendTraces očakáva dvojrozmerné pole
+                 y: [[data.y[0]]]
+             }, [0]); // Index série v grafe, do ktorej chceme dáta pridať
+         });
+	</script>
+    </body>
+</html>
+
+

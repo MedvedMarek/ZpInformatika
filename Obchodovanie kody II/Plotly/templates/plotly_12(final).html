@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Live Data Plot</title>
+        <style>
+         html, body {
+             margin: 0;
+             padding: 0;
+             width: 100%;
+             height: 100%;
+             background-color: #333; /* Tmavé pozadie */
+             color: #fff;
+         }
+         #graph {
+             width: 100%;
+             height: 100%;
+             background-color: #222;
+         }
+        </style>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+    <body>
+        <div id="graph"></div>
+        <script>
+         var initialPlot = true;
+         var layout = {
+             xaxis: {
+                 rangeslider: { visible: false },
+                 color: '#fff',
+                 nticks: 20, // aka husta bude mriezka
+		 tickformat: '%H:%M:%S'
+             },
+             yaxis: {
+                 fixedrange: false,
+                 color: '#fff',
+                 nticks: 15 // aka husta bude mriezka
+             },
+             paper_bgcolor: '#222',
+             plot_bgcolor: '#222',
+             font: {
+                 color: '#fff'
+             },
+             autosize: true, // Automatické prispôsobenie veľkosti
+             margin: { l: 100, r: 150, t: 50, b: 50 } // Nastavenie okrajov
+         };
+         var config = {
+             displayModeBar: false,
+             scrollZoom: true,
+             dragMode: 'pan',
+             responsive: true // Pridanie reaktivity na zmenu veľkosti okna
+         };
+
+         function fetchData() {
+             fetch('/data')
+                 .then(response => response.json())
+                 .then(data => {
+                     if (Object.keys(data).length > 0) {
+                         var sviecky = {
+                             x: data.x,
+                             close: data.close,
+                             open: data.open,
+                             high: data.high,
+                             low: data.low,
+                             type: 'candlestick',
+			     name: 'sviecky',
+                             hoverinfo: 'none' // Vypnutie tooltipov
+                         };
+			 var arca ={
+			     x: data.arca_x,
+			     y: data.arca_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.arca_v,
+				 color: '#1f77b4',  // muted blue
+				 opacity: 0.5
+			     },
+			     name: 'ARCA',
+			     hoverinfo: 'none'
+			 };
+			 var bats ={
+			     x: data.bats_x,
+			     y: data.bats_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.bats_v,
+				 color: '#ff7f0e',  // safety orange
+				 opacity: 0.5
+			     },
+			     name: 'BATS',
+			     hoverinfo: 'none'
+			 };
+			 var drctedge ={
+			     x: data.drctedge_x,
+			     y: data.drctedge_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.drctedge_v,
+				 color: '#2ca02c',  // cooked asparagus green
+				 opacity: 0.5
+			     },
+			     name: 'DRCTEDGE',
+			     hoverinfo: 'none'
+			 };
+			 var edgea ={
+			     x: data.edgea_x,
+			     y: data.edgea_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.edgea_v,
+				 color: '#d62728',  // brick red
+				 opacity: 0.5
+			     },
+			     name: 'EDGEA',
+			     hoverinfo: 'none'
+			 };
+			 var iex ={
+			     x: data.iex_x,
+			     y: data.iex_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.iex_v,
+				 color: '#9467bd',  // muted purple
+				 opacity: 0.5
+			     },
+			     name: 'IEX',
+			     hoverinfo: 'none'
+			 };
+			 var memx ={
+			     x: data.memx_x,
+			     y: data.memx_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.memx_v,
+				 color: '#8c564b',  // chestnut brown
+				 opacity: 0.5
+			     },
+			     name: 'MEMX',
+			     hoverinfo: 'none'
+			 };
+			 var nasdaq ={
+			     x: data.nasdaq_x,
+			     y: data.nasdaq_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.nasdaq_v,
+				 color: '#e377c2',  // raspberry yogurt pink
+				 opacity: 0.5
+			     },
+			     name: 'NASDAQ',
+			     hoverinfo: 'none'
+			 };
+			 var nyse ={
+			     x: data.nyse_x,
+			     y: data.nyse_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.nyse_v,
+				 color: '#7f7f7f',  // middle gray
+				 opacity: 0.5
+			     },
+			     name: 'NYSE',
+			     hoverinfo: 'none'
+			 };
+			 var pearl ={
+			     x: data.pearl_x,
+			     y: data.pearl_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.pearl_v,
+				 color: '#bcbd22',  // curry yellow-green
+				 opacity: 0.5
+			     },
+			     name: 'PEARL',
+			     hoverinfo: 'none'
+			 };
+			 var psx ={
+			     x: data.psx_x,
+			     y: data.psx_y,
+			     type: 'scatter',
+			     mode: 'markers',
+			     marker: {
+				 size: data.psx_v,
+				 color: '#17becf',   // blue-teal
+				 opacity: 0.5
+			     },
+			     name: 'PSX',
+			     hoverinfo: 'none'
+			 };
+                         if (initialPlot) {
+                             Plotly.newPlot('graph', [sviecky, arca, bats, drctedge, edgea, iex, memx, nasdaq, nyse, pearl, psx], layout, config);
+                             initialPlot = false;
+                         } else {
+                             Plotly.extendTraces('graph', {
+                                 x: [data.x],
+                                 close: [data.close],
+                                 open: [data.open],
+                                 high: [data.high],
+                                 low: [data.low]
+                             }, [0]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.arca_x],
+				 y: [data.arca_y],
+				 'marker.size': [data.arca_v]
+			     }, [1]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.bats_x],
+				 y: [data.bats_y],
+				 'marker.size': [data.bats_v]
+			     }, [2]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.drctedge_x],
+				 y: [data.drctedge_y],
+				 'marker.size': [data.drctedge_v]
+			     }, [3]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.edgea_x],
+				 y: [data.edgea_y],
+				 'marker.size': [data.edgea_v]
+			     }, [4]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.iex_x],
+				 y: [data.iex_y],
+				 'marker.size': [data.iex_v]
+			     }, [5]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.memx_x],
+				 y: [data.memx_y],
+				 'marker.size': [data.memx_v]
+			     }, [6]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.nasdaq_x],
+				 y: [data.nasdaq_y],
+				 'marker.size': [data.nasdaq_v]
+			     }, [7]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.nyse_x],
+				 y: [data.nyse_y],
+				 'marker.size': [data.nyse_v]
+			     }, [8]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.pearl_x],
+				 y: [data.pearl_y],
+				 'marker.size': [data.pearl_v]
+			     }, [9]);
+			     Plotly.extendTraces('graph', {
+				 x: [data.psx_x],
+				 y: [data.psx_y],
+				 'marker.size': [data.psx_v]
+			     }, [10]);
+			     Plotly.restyle('graph', {'marker.opacity': 0.5}, [0,1,2,3,4,5,6,7,8,9,10]);
+                         }
+                     }
+                 });
+         }
+
+         // Aktualizujte každých 500 milisekúnd (kazdu sekundu)
+	 // Toto sa aktualizuje, ale nevykresluje sa zakazdym. Je to len nacuvac, a ked su zmenene data,
+	 // alebo je doplneny tick, tak sa data vykreslia.
+         setInterval(fetchData, 1000);
+
+         // Počiatočné načítanie dát
+         fetchData();
+        </script>
+    </body>
+</html>
+

@@ -1,0 +1,76 @@
+import random
+import keyboard
+import os
+import time
+
+# Veľkosť hracej plochy
+width = 20
+height = 10
+
+# Inicializácia hada
+snake = [(width//2, height//2)]
+snake_direction = (1, 0)
+
+# Generovanie jedla pre hada
+def generate_food():
+    while True:
+        food_x = random.randint(0, width-1)
+        food_y = random.randint(0, height-1)
+        food_pos = (food_x, food_y)
+        if food_pos not in snake:
+            return food_pos
+
+# Hra
+def game():
+    # Inicializácia hada a jedla
+    snake = [(width//2, height//2)]
+    snake_direction = (1, 0)
+    food_pos = generate_food()
+
+    game_over = False
+    while not game_over:
+        os.system('cls')  # Vymazanie konzoly (pre Windows, pre iné systémy môže byť iný príkaz)
+
+        # Vykreslenie hracej plochy
+        for y in range(height):
+            for x in range(width):
+                if (x, y) in snake:
+                    print("X", end="")
+                elif (x, y) == food_pos:
+                    print("O", end="")
+                else:
+                    print(".", end="")
+            print()
+
+        # Pohyb hada
+        if keyboard.is_pressed('w') and snake_direction != (0, 1):
+            snake_direction = (0, -1)
+        elif keyboard.is_pressed('s') and snake_direction != (0, -1):
+            snake_direction = (0, 1)
+        elif keyboard.is_pressed('a') and snake_direction != (1, 0):
+            snake_direction = (-1, 0)
+        elif keyboard.is_pressed('d') and snake_direction != (-1, 0):
+            snake_direction = (1, 0)
+
+        snake_head = (snake[0][0] + snake_direction[0], snake[0][1] + snake_direction[1])
+        snake.insert(0, snake_head)
+        snake.pop()
+
+        # Detekcia kolízie hada sám so sebou
+        if snake_head in snake[1:]:
+            game_over = True
+
+        # Detekcia zjedenia jedla
+        if snake_head == food_pos:
+            snake.append((food_pos[0], food_pos[1]))
+            food_pos = generate_food()
+
+        # Detekcia kolízie hada s okrajmi
+        if snake_head[0] < 0 or snake_head[0] >= width or snake_head[1] < 0 or snake_head[1] >= height:
+            game_over = True
+
+        # Zastavenie na krátku chvíľu pre plynulý pohyb hada
+        time.sleep(0.1)
+
+game()
+print("Koniec hry!")
